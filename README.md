@@ -1,4 +1,4 @@
-# Projeto 1 - Tabela do Brasileirão (Programação Web Fullstack)
+# Projeto 2 - Tabela do Brasileirão (Programação Web Fullstack)
 
 ## Visão Geral
 
