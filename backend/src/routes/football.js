@@ -20,7 +20,7 @@ router.use((req, res, next) => {
   next();
 });
 
-router.get('/championship/:year', protect, async (req, res) => {
+router.get('/championships/:year', protect, async (req, res) => {
   const { year } = req.params;
   const league = 71;
   const cacheKey = `championship:${year}`;

@@ -27,8 +27,8 @@ app.get('/', (req, res) => {
   res.send('Servidor subiu');
 });
 
-app.use('/api/football', protect, footballRouter);
-app.use('/api/auth', authLimiter, authRouter);
+app.use('/api', protect, footballRouter);
+app.use('/api/v1', authLimiter, authRouter);
 
 app.listen(port, () => {
   console.log(`Servidor Rodando`);

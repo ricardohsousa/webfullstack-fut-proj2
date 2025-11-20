@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import User from '../model/User.js';
 import dotenv from 'dotenv';
 import { body, validationResult } from 'express-validator';
+import redisClient from '../config/redis.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 dotenv.config();
 
@@ -24,7 +26,7 @@ const validateLogin = [
   body('password').notEmpty().withMessage('A Senha é obrigátoria!'),
 ];
 
-router.post('/register', validateRegister, async (req, res) => {
+router.post('/users', validateRegister, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -59,7 +61,7 @@ router.post('/register', validateRegister, async (req, res) => {
   }
 });
 
-router.post('/login', validateLogin, async (req, res) => {
+router.post('/sessions', validateLogin, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -79,6 +81,18 @@ router.post('/login', validateLogin, async (req, res) => {
     } else {
       res.status(401).json({ message: 'Usuário ou senha inválidos' });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro no Sistema' });
+  }
+});
+
+router.delete('/sessions', protect, async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    await redisClient.set(`invalidated_token:${token}`, 'true', 'EX', decoded.exp - Math.floor(Date.now() / 1000));
+    res.status(200).json({ message: 'Logout bem-sucedido' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erro no Sistema' });
