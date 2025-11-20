@@ -37,7 +37,7 @@ router.get('/championships/:year', protect, async (req, res) => {
     let championshipData = await ChampionshipData.findOne({ year });
 
     if (championshipData) {
-      await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 3600);
+      await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 900);
       logger.info(`Buscando o campeonato de ${year} no Banco.`);
       return res.json({ response: { rounds: championshipData.rounds, fixtures: championshipData.fixtures } });
     }
@@ -61,7 +61,7 @@ router.get('/championships/:year', protect, async (req, res) => {
         rounds: dataRounds.response,
         fixtures: dataFixtures.response,
       });
-      await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 3600);
+      await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 900);
       logger.info(`Buscando o campeonato de ${year} na API`);
       return res.json({ response: { rounds: championshipData.rounds, fixtures: championshipData.fixtures } });
     } else {
