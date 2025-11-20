@@ -13,7 +13,7 @@ function Login({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

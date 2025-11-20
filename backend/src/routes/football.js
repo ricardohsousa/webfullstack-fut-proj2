@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import ChampionshipData from '../model/ChampionshipData.js';
 import redisClient from '../config/redis.js';
+import logger from '../config/logger.js';
 
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -22,13 +23,14 @@ router.use((req, res, next) => {
 
 router.get('/championships/:year', protect, async (req, res) => {
   const { year } = req.params;
+  logger.info(`Recebida a solicitação de dados do campeonato para o ano: ${year}`);
   const league = 71;
   const cacheKey = `championship:${year}`;
 
   try {
     const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {
-      console.log(`Buscando o campeonato de ${year} do Redis.`);
+      logger.info(`Buscando o campeonato de ${year} do Redis.`);
       return res.json({ response: JSON.parse(cachedData) });
     }
 
@@ -36,7 +38,7 @@ router.get('/championships/:year', protect, async (req, res) => {
 
     if (championshipData) {
       await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 3600);
-      console.log(`Buscando o campeonato de ${year} no Banco.`);
+      logger.info(`Buscando o campeonato de ${year} no Banco.`);
       return res.json({ response: { rounds: championshipData.rounds, fixtures: championshipData.fixtures } });
     }
 
@@ -60,14 +62,14 @@ router.get('/championships/:year', protect, async (req, res) => {
         fixtures: dataFixtures.response,
       });
       await redisClient.set(cacheKey, JSON.stringify({ rounds: championshipData.rounds, fixtures: championshipData.fixtures }), 'EX', 3600);
-      console.log(`Buscando o campeonato de ${year} na API`);
+      logger.info(`Buscando o campeonato de ${year} na API`);
       return res.json({ response: { rounds: championshipData.rounds, fixtures: championshipData.fixtures } });
     } else {
       return res.status(404).json({ message: 'Não foi encontrado dados para esse ano' });
     }
 
   } catch (error) {
-    console.error(`Houve um erro ao buscar dados do ano ${year}:`, error);
+    logger.error(`Houve um erro ao buscar dados do ano ${year}:`, error);
     res.status(500).json({ error: 'Erro no sistema' });
   }
 });

@@ -43,7 +43,7 @@ function TabelaCampeonato() {
       dispatch({ type: 'LOADING' });
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/football/championship/${anoSelecionado}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/championships/${anoSelecionado}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

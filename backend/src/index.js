@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import logger from './config/logger.js';
 import footballRouter from './routes/football.js';
 import authRouter from './routes/auth.js';
 import connectDB from './config/db.js';
@@ -27,9 +28,9 @@ app.get('/', (req, res) => {
   res.send('Servidor subiu');
 });
 
-app.use('/api', protect, footballRouter);
 app.use('/api/v1', authLimiter, authRouter);
+app.use('/api', protect, footballRouter);
 
 app.listen(port, () => {
-  console.log(`Servidor Rodando`);
+  logger.info(`Servidor Rodando`);
 });
