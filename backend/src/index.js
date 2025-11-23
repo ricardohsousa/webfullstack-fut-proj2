@@ -7,6 +7,7 @@ import authRouter from './routes/auth.js';
 import connectDB from './config/db.js';
 import { protect } from './middleware/authMiddleware.js';
 import rateLimit from 'express-rate-limit';
+import compression from 'compression';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const authLimiter = rateLimit({
   message: 'Houve um erro, volte mais tarde!',
 });
 
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
