@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoSanitizeMiddleware from './middleware/mongoSanitizeMiddleware.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import logger from './config/logger.js';
@@ -23,6 +24,7 @@ const authLimiter = rateLimit({
 });
 
 app.use(compression());
+app.use(mongoSanitizeMiddleware);
 app.use(cors());
 app.use(express.json());
 
